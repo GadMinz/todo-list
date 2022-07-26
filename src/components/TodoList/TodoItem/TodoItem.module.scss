@@ -1,0 +1,28 @@
+.todo_item{
+  &_container {
+    background-color: white;
+    box-shadow: 0 8px 11px -8px rgba(34, 60, 80, 0.09);
+    margin-bottom: 15px;
+    width: 100%;
+    padding: 25px 20px;
+    border-radius: 5px;
+  }
+
+  &_title {
+    font-size: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    margin-bottom: 15px;
+  }
+
+  &_description {
+    font-size: 15px;
+    margin-bottom: 15px;
+  }
+
+  &_button_container {
+    display: flex;
+    justify-content: right;
+    gap: 5px;
+  }
+}

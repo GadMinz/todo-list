@@ -2,6 +2,7 @@ import React from "react";
 import s from "./App.module.scss";
 import Header from "./components/Header/Header";
 import TodoPanel from "./components/TodoPanel/TodoPanel";
+import TodoList from "./components/TodoList/TodoList";
 
 const DEFAULT_TODO_LIST = [
   { id: 1, name: "task 1", description: "description 1", checked: false },
@@ -18,11 +19,22 @@ const App = () => {
     ]);
   };
 
+  const checkTodo = (id: Todo["id"]) => {
+    setTodos(
+      todos.map((todo) => {
+        if (todo.id === id) {
+          return { ...todo, checked: !todo.checked };
+        }
+        return todo;
+      })
+    );
+  };
   return (
     <div className={s.app_container}>
       <div className={s.container}>
         <Header todoCount={todos.length} />
         <TodoPanel addTodo={addTodo} />
+        <TodoList todos={todos} checkTodo={checkTodo}/>
       </div>
     </div>
   );
