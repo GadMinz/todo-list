@@ -2,27 +2,47 @@ import React from "react";
 import s from "./TodoPanel.module.scss";
 import Button from "../Button/Button";
 
-interface TodoPanelProps {
-  addTodo: ({ name, description }: Omit<Todo, "checked" | "id">) => void;
+interface AddTodoPanelProps {
+  mode: "add";
+  addTodo: ({ name, description }: Omit<Todo, "id" | "checked">) => void;
 }
+
+interface EditTodoPanelProps {
+  mode: "edit";
+  editTodo: Omit<Todo, "id" | "checked">;
+  changeTodo: ({ name, description }: Omit<Todo, "id" | "checked">) => void;
+}
+
+type TodoPanelProps = AddTodoPanelProps | EditTodoPanelProps;
 
 const DEFAULT_TODO = {
   name: "",
   description: "",
 };
 
-const TodoPanel: React.FC<TodoPanelProps> = ({ addTodo }) => {
-  const [todo, setTodo] = React.useState(DEFAULT_TODO);
+const TodoPanel: React.FC<TodoPanelProps> = (props) => {
+  const isEdit = props.mode === "edit";
+  const [todo, setTodo] = React.useState(
+    isEdit ? props.editTodo : DEFAULT_TODO
+  );
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+  const onClick = () => {
+    if (todo.description === "" || todo.description === "") {
+      alert("Empty name or description");
+      return;
+    }
+    if (isEdit) {
+      return props.changeTodo(todo);
+    }
+    props.addTodo(todo);
+    setTodo(DEFAULT_TODO);
+  };
+
+  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value, name } = event.target;
     setTodo({ ...todo, [name]: value });
   };
 
-  const onClick = () => {
-    addTodo({ name: todo.name, description: todo.description });
-    setTodo(DEFAULT_TODO);
-  };
   return (
     <div className={s.todo_panel_container}>
       <div className={s.fields_container}>
@@ -30,11 +50,11 @@ const TodoPanel: React.FC<TodoPanelProps> = ({ addTodo }) => {
           <label htmlFor="name">
             <div>name</div>
             <input
-              type="text"
+              autoComplete="off"
               id="name"
               value={todo.name}
-              name="name"
               onChange={onChange}
+              name="name"
             />
           </label>
         </div>
@@ -42,19 +62,26 @@ const TodoPanel: React.FC<TodoPanelProps> = ({ addTodo }) => {
           <label htmlFor="description">
             <div>description</div>
             <input
-              type="text"
+              autoComplete="off"
               id="description"
               value={todo.description}
-              name="description"
               onChange={onChange}
+              name="description"
             />
           </label>
         </div>
       </div>
       <div className={s.button_container}>
-        <Button onClick={onClick} color="blue">
-          ADD
-        </Button>
+        {!isEdit && (
+          <Button color="blue" onClick={onClick}>
+            ADD
+          </Button>
+        )}
+        {isEdit && (
+          <Button color="orange" onClick={onClick}>
+            EDIT
+          </Button>
+        )}
       </div>
     </div>
   );
